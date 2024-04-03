@@ -6,6 +6,7 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
+import { type NextRequestWithAuth } from "next-auth/middleware";
 import DiscordProvider from "next-auth/providers/discord";
 
 import { env } from "~/env";
@@ -48,6 +49,10 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
+  pages: {
+    signIn: "/login",
+  },
+  secret: env.NEXTAUTH_SECRET,
   adapter: DrizzleAdapter(db, createTable) as Adapter,
   providers: [
     DiscordProvider({

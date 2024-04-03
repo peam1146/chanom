@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "af6fa1b1-94dd-4b89-976f-727433152699",
+  "id": "9de9b5db-57b6-4d40-910e-7b7488f1211e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "chanom_account": {
@@ -105,7 +105,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -120,26 +120,19 @@
       },
       "uniqueConstraints": {}
     },
-    "chanom_post": {
-      "name": "chanom_post",
+    "chanom_chat_message": {
+      "name": "chanom_chat_message",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
+        "chat_message_id": {
+          "name": "chat_message_id",
+          "type": "text(255)",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text(256)",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false
         },
-        "createdById": {
-          "name": "createdById",
-          "type": "text(255)",
+        "room_id": {
+          "name": "room_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -152,37 +145,35 @@
           "autoincrement": false,
           "default": "CURRENT_TIMESTAMP"
         },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "integer",
+        "user_id": {
+          "name": "user_id",
+          "type": "text(255)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
-      "indexes": {
-        "createdById_idx": {
-          "name": "createdById_idx",
-          "columns": [
-            "createdById"
-          ],
-          "isUnique": false
-        },
-        "name_idx": {
-          "name": "name_idx",
-          "columns": [
-            "name"
-          ],
-          "isUnique": false
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
-        "chanom_post_createdById_chanom_user_id_fk": {
-          "name": "chanom_post_createdById_chanom_user_id_fk",
-          "tableFrom": "chanom_post",
+        "chanom_chat_message_room_id_chanom_chat_room_room_id_fk": {
+          "name": "chanom_chat_message_room_id_chanom_chat_room_room_id_fk",
+          "tableFrom": "chanom_chat_message",
+          "tableTo": "chanom_chat_room",
+          "columnsFrom": [
+            "room_id"
+          ],
+          "columnsTo": [
+            "room_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "chanom_chat_message_user_id_chanom_user_id_fk": {
+          "name": "chanom_chat_message_user_id_chanom_user_id_fk",
+          "tableFrom": "chanom_chat_message",
           "tableTo": "chanom_user",
           "columnsFrom": [
-            "createdById"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -194,18 +185,201 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "chanom_chat_message_reaction": {
+      "name": "chanom_chat_message_reaction",
+      "columns": {
+        "chat_message_id": {
+          "name": "chat_message_id",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reaction": {
+          "name": "reaction",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reacted_at": {
+          "name": "reacted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "chanom_chat_message_reaction_chat_message_id_chanom_chat_message_chat_message_id_fk": {
+          "name": "chanom_chat_message_reaction_chat_message_id_chanom_chat_message_chat_message_id_fk",
+          "tableFrom": "chanom_chat_message_reaction",
+          "tableTo": "chanom_chat_message",
+          "columnsFrom": [
+            "chat_message_id"
+          ],
+          "columnsTo": [
+            "chat_message_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "chanom_chat_message_reaction_user_id_chanom_user_id_fk": {
+          "name": "chanom_chat_message_reaction_user_id_chanom_user_id_fk",
+          "tableFrom": "chanom_chat_message_reaction",
+          "tableTo": "chanom_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "chanom_chat_room_participant": {
+      "name": "chanom_chat_room_participant",
+      "columns": {
+        "room_id": {
+          "name": "room_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "joined_at": {
+          "name": "joined_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "chanom_chat_room_participant_room_id_chanom_chat_room_room_id_fk": {
+          "name": "chanom_chat_room_participant_room_id_chanom_chat_room_room_id_fk",
+          "tableFrom": "chanom_chat_room_participant",
+          "tableTo": "chanom_chat_room",
+          "columnsFrom": [
+            "room_id"
+          ],
+          "columnsTo": [
+            "room_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "chanom_chat_room_participant_user_id_chanom_user_id_fk": {
+          "name": "chanom_chat_room_participant_user_id_chanom_user_id_fk",
+          "tableFrom": "chanom_chat_room_participant",
+          "tableTo": "chanom_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "chanom_chat_room": {
+      "name": "chanom_chat_room",
+      "columns": {
+        "room_id": {
+          "name": "room_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "room_type": {
+          "name": "room_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "latest_message": {
+          "name": "latest_message",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "latest_message_at": {
+          "name": "latest_message_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_latest_message_read": {
+          "name": "is_latest_message_read",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "is_pin": {
+          "name": "is_pin",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "chanom_session": {
       "name": "chanom_session",
       "columns": {
-        "sessionToken": {
-          "name": "sessionToken",
+        "session_token": {
+          "name": "session_token",
           "type": "text(255)",
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false
         },
-        "userId": {
-          "name": "userId",
+        "user_id": {
+          "name": "user_id",
           "type": "text(255)",
           "primaryKey": false,
           "notNull": true,
@@ -223,18 +397,18 @@
         "session_userId_idx": {
           "name": "session_userId_idx",
           "columns": [
-            "userId"
+            "user_id"
           ],
           "isUnique": false
         }
       },
       "foreignKeys": {
-        "chanom_session_userId_chanom_user_id_fk": {
-          "name": "chanom_session_userId_chanom_user_id_fk",
+        "chanom_session_user_id_chanom_user_id_fk": {
+          "name": "chanom_session_user_id_chanom_user_id_fk",
           "tableFrom": "chanom_session",
           "tableTo": "chanom_user",
           "columnsFrom": [
-            "userId"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -263,6 +437,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "username": {
+          "name": "username",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "email": {
           "name": "email",
           "type": "text(255)",
@@ -275,8 +456,7 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "autoincrement": false
         },
         "image": {
           "name": "image",
@@ -286,13 +466,21 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "chanom_user_username_unique": {
+          "name": "chanom_user_username_unique",
+          "columns": [
+            "username"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "chanom_verificationToken": {
-      "name": "chanom_verificationToken",
+    "chanom_verification_token": {
+      "name": "chanom_verification_token",
       "columns": {
         "identifier": {
           "name": "identifier",
@@ -319,12 +507,12 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "chanom_verificationToken_identifier_token_pk": {
+        "chanom_verification_token_identifier_token_pk": {
           "columns": [
             "identifier",
             "token"
           ],
-          "name": "chanom_verificationToken_identifier_token_pk"
+          "name": "chanom_verification_token_identifier_token_pk"
         }
       },
       "uniqueConstraints": {}
