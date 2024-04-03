@@ -30,6 +30,14 @@ export const env = createEnv({
     ),
     DISCORD_CLIENT_ID: z.string(),
     DISCORD_CLIENT_SECRET: z.string(),
+    PUSHER_APP_ID: z.string(),
+    PUSHER_APP_KEY: z.string(),
+    PUSHER_APP_SECRET: z.string(),
+    PUSHER_APP_CLUSTER: z.string(),
+    PUSHER_USE_TLS: z
+      .string()
+      .transform((str) => str === "true")
+      .default("true"),
   },
 
   /**
@@ -53,6 +61,11 @@ export const env = createEnv({
     DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
     DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
     DATABASE_AUTH_TOKEN: process.env.DATABASE_AUTH_TOKEN,
+    PUSHER_APP_ID: process.env.PUSHER_APP_ID,
+    PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
+    PUSHER_APP_SECRET: process.env.PUSHER_APP_SECRET,
+    PUSHER_APP_CLUSTER: process.env.PUSHER_APP_CLUSTER,
+    PUSHER_USE_TLS: process.env.PUSHER_USE_TLS,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
