@@ -23,11 +23,11 @@ const config = {
         mustard: "#FDCD79",
         mayonnaise: "#E9DDC7",
         cream: "#F5ECDB",
-        brown: "5A3822",
+        brown: "#5A3822",
         pink: "#FF908A",
         orange: "#ED612C",
         green: "#00B88E",
-        blue: "1C8BB8",
+        blue: "#1C8BB8",
       },
       keyframes: {
         "accordion-down": {
