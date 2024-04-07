@@ -1,6 +1,6 @@
 import SignIn from "./components/SignIn";
 
-export default function LoginPage() {
+export default function SignInPage() {
   return (
     <div className="max-w-screen flex min-h-screen justify-center bg-chanom">
       <SignIn />

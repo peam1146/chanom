@@ -20,7 +20,7 @@ export default function SignUp() {
       };
 
   return (
-    <div className="h-[309 px] my-auto flex w-[377px] flex-col rounded-lg border-2 border-brown overflow-hidden shadow-window">
+    <div className="h-[308 px] my-auto flex w-[372px] flex-col rounded-lg border-2 border-brown overflow-hidden shadow-window">
       <div className="flex gap-x-2 bg-orange px-3 py-1 border-b-2 border-brown">
         <Image src={Chanom} width={23} height={24} alt="Chanom Icon" />
         <h1 className="font-bold text-cream">Chanom</h1>
@@ -30,20 +30,20 @@ export default function SignUp() {
           <h1 className="self-center font-bold text-brown">Sign Up</h1>
           <input
             type="text"
-            className="w-[281px] self-center rounded-lg border-2 border-brown bg-transparent px-3 py-2 font-bold text-brown placeholder:text-chanom" 
+            className="w-[280px] self-center rounded-lg border-2 border-brown bg-transparent px-3 py-2 font-bold text-brown placeholder:text-chanom" 
             placeholder="Username"
             name="username"
           ></input>
           <input
             type="text"
-            className="w-[281px] self-center rounded-lg border-2 border-brown bg-transparent px-3 py-2 font-bold text-brown placeholder:text-chanom"
+            className="w-[280px] self-center rounded-lg border-2 border-brown bg-transparent px-3 py-2 font-bold text-brown placeholder:text-chanom"
             placeholder="Password"
             name="password"
           ></input>
           <button type="submit" className="self-center rounded-lg border-2 border-brown bg-orange px-5 py-1 text-cream font-bold">
             Start
           </button>
-          <Link href="/login" className="self-center font-bold text-brown underline underline-offset-4">
+          <Link href="/signin" className="self-center font-bold text-brown underline underline-offset-4">
             Sign In >
           </Link>
         </form>
