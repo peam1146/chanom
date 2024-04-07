@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Chanom from "../../../../../public/icon-svg/chanom.svg";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 type CreateCommuModalProps = {
   setIsOpen: (value: boolean) => void;
@@ -9,12 +10,18 @@ type CreateCommuModalProps = {
 export default function CreateCommuModal(prop: CreateCommuModalProps) {
   const { setIsOpen } = prop;
 
+  const [error, setError] = useState<String | null>();
+
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name");
-    console.log(name);
-    setIsOpen(false);
+    if (name == "ซ้ำ") {
+      setError("This name is already existed.");
+    } else {
+      console.log(name);
+      setIsOpen(false);
+    }
   };
 
   return (
@@ -25,12 +32,20 @@ export default function CreateCommuModal(prop: CreateCommuModalProps) {
       </div>
       <div className="item-center flex h-full flex-col justify-center bg-cream py-4">
         <form onSubmit={formSubmit} className="flex flex-col gap-6 ">
-          <input
-            type="text"
-            className="h1 w-[280px] self-center rounded-xl border-2 border-brown bg-transparent px-3 py-2 font-bold text-brown placeholder:text-chanom"
-            placeholder="Group Name"
-            name="name"
-          ></input>
+          <div className="flex flex-col gap-1">
+            <input
+              type="text"
+              className="h1 w-[280px] self-center rounded-xl border-2 border-brown bg-transparent px-3 py-2 font-bold text-brown placeholder:text-chanom"
+              placeholder="Group Name"
+              name="name"
+              required
+            ></input>
+            {error && (
+              <p className="h2 self-center text-center font-bold text-brown">
+                {error}
+              </p>
+            )}
+          </div>
           <Button size="lg" type="submit" className="w-[91px] self-center">
             Create
           </Button>
