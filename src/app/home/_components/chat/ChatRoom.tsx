@@ -2,7 +2,7 @@
 import { useState } from "react";
 import ChatBox from "./ChatBox";
 import Image from "next/image";
-import CloseButton from "../CloseButton";
+import CloseButton from "../../../../components/CloseButton";
 type ChatRoomProps = {
   roomName: string;
   numberOfMembers?: number;
@@ -39,7 +39,7 @@ export default function ChatRoom(props: ChatRoomProps) {
           )}
         </div>
       </div>
-      <div className="scrollbar-hide flex h-full flex-col gap-[10px] overflow-scroll p-3">
+      <div className="flex h-full flex-col gap-[10px] overflow-scroll p-3 scrollbar-hide">
         <ChatBox
           message="Hi, cutie. Do you have an bf?"
           isMe={false}
