@@ -2,7 +2,7 @@
 import { useState } from "react";
 import ChatBox from "./ChatBox";
 import Image from "next/image";
-import CloseButton from "../../../../components/CloseButton";
+import CloseButton from "../CloseButton";
 type ChatRoomProps = {
   roomName: string;
   numberOfMembers?: number;

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import CloseButton from "../CloseButton";
+import CloseButton from "../../app/home/_components/CloseButton";
 
 import { cn } from "@/lib/utils";
 
