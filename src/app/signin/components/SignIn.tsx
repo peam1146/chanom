@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Chanom from "../../../../public/icon-svg/chanom.svg";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function SignIn() {
 
@@ -23,27 +24,27 @@ export default function SignIn() {
     <div className="h-[308 px] my-auto flex w-[372px] flex-col rounded-lg border-2 border-brown overflow-hidden shadow-window">
       <div className="flex gap-x-2 bg-orange px-3 py-1 border-b-2 border-brown">
         <Image src={Chanom} width={23} height={24} alt="Chanom Icon" />
-        <h1 className="font-bold text-cream">Chanom</h1>
+        <h1 className="h1 font-bold text-cream">Chanom</h1>
       </div>
       <div className="bg-cream py-4">
         <form onSubmit={formSubmit} className="flex flex-col gap-y-3">
-          <h1 className="self-center font-bold text-brown">Sign In</h1>
+          <h1 className="h1 self-center font-bold text-brown">Sign In</h1>
           <input
             type="text"
-            className="w-[280px] self-center rounded-lg border-2 border-brown bg-transparent px-3 py-2 font-bold text-brown placeholder:text-chanom" 
+            className="w-[280px] self-center rounded-xl border-2 border-brown bg-transparent px-3 py-2 h1 font-bold text-brown placeholder:text-chanom" 
             placeholder="Username"
             name="username"
           ></input>
           <input
             type="text"
-            className="w-[280px] self-center rounded-lg border-2 border-brown bg-transparent px-3 py-2 font-bold text-brown placeholder:text-chanom"
+            className="w-[280px] self-center rounded-xl border-2 border-brown bg-transparent px-3 py-2 h1 font-bold text-brown placeholder:text-chanom"
             placeholder="Password"
             name="password"
           ></input>
-          <button type="submit" className="self-center rounded-lg border-2 border-brown bg-orange px-5 py-1 text-cream font-bold">
+          <Button size='lg' type="submit" className="self-center w-[91px]">
             Start
-          </button>
-          <Link href="/signup" className="self-center font-bold text-brown underline underline-offset-4">
+          </Button>
+          <Link href="/signup" className="h1 self-center font-bold text-brown underline underline-offset-[5px]">
             Sign Up >
           </Link>
         </form>
