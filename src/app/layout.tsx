@@ -1,8 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "@/styles/globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const visbyRound = localFont({
+  src: [
+    {
+      path: "../../public/fonts/VisbyRoundCF-Regular.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/VisbyRoundCF-Bold.otf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={visbyRound.className}>{children}</body>
     </html>
   );
 }
