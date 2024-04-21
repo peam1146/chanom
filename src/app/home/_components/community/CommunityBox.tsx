@@ -28,7 +28,6 @@ export default function CommunityBox(prop: CommunityBoxProps) {
     const memberCommunity = register.filter(
       (message) => message.room === community.room,
     );
-    console.log(community);
     return {
       ...community,
       numberMember: memberCommunity.length,

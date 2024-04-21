@@ -3,14 +3,19 @@ import Image from "next/image";
 import User from "../../../../../public/icon-svg/user.svg";
 import Message from "../../../../../public/icon-svg/message.svg";
 import { cn } from "@/lib/utils";
+import { Message as MESSAGE, MessageEvents } from "@/lib/socket/types";
+import { send } from "process";
 
 type PeepRoomProps = {
   name: string;
+  roomID: string;
   isChating: boolean;
+  setRoomID: (roomID: string) => void;
+  sendJsonMessage: (message: MESSAGE) => void;
 };
 
 export default function PeepRoom(prop: PeepRoomProps) {
-  const { name, isChating } = prop;
+  const { name, setRoomID, isChating, roomID, sendJsonMessage } = prop;
 
   return (
     <div
@@ -18,6 +23,14 @@ export default function PeepRoom(prop: PeepRoomProps) {
         "h-26 flex justify-between gap-3 border-b-2 border-brown p-2",
         isChating ? "bg-mayonnaise" : "cursor-pointer bg-white",
       )}
+      onClick={() => {
+        setRoomID(roomID);
+        sendJsonMessage({
+          event: MessageEvents.PING,
+          data: name,
+          roomID: roomID,
+        });
+      }}
     >
       <div className="rounded-full border-2 border-brown bg-mustard p-1">
         <Image src={User} width={32} height={30} alt="Group Icon" />

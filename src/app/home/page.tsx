@@ -17,10 +17,23 @@ export default function Page() {
   const SessionId = localStorage.getItem("SessionId");
   const name = localStorage.getItem("username") || "Anonymous";
   const WS_URL = `ws://localhost:8000/ws?session_id=${SessionId}`;
+  const [roomID, setRoomID] = useState<string>("Welcome to Chanom!");
 
   const [messageHistory, setMessageHistory] = useState<Message[]>([]);
 
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(WS_URL);
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+    WS_URL,
+    {
+      heartbeat: {
+        message: JSON.stringify({
+          event: "user_active",
+          data: name,
+          roomID: SessionId,
+        }),
+        interval: 1000,
+      },
+    },
+  );
 
   useEffect(() => {
     if (lastJsonMessage !== null) {
@@ -36,13 +49,23 @@ export default function Page() {
   return (
     <div className="flex h-screen w-screen items-center justify-center gap-5">
       <div className="flex flex-col gap-5">
-        <PeepBox />
+        <PeepBox
+          sendJsonMessage={handleClickSendMessage}
+          messageHistory={messageHistory}
+          setRoomID={setRoomID}
+        />
         <CommunityBox
           sendJsonMessage={handleClickSendMessage}
           messageHistory={messageHistory}
         />
       </div>
-      {/* <ChatRoom roomName="general" numberOfMembers={0} myName={name} /> */}
+      <ChatRoom
+        roomID={roomID}
+        roomName={roomID}
+        messageHistory={messageHistory}
+        sendJsonMessage={handleClickSendMessage}
+        myName={name}
+      />
     </div>
   );
 }

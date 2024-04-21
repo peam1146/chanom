@@ -3,38 +3,28 @@ import { useEffect, useRef, useState } from "react";
 import ChatBox from "./ChatBox";
 import Image from "next/image";
 import CloseButton from "../CloseButton";
-import useWebSocket from "react-use-websocket";
 import { MessageEvents, Message } from "@/lib/socket/types";
-import { checkMyMessage } from "@/lib/socket/chatroom";
+import useChatHistory from "@/hooks/useChatHistory";
 
 type ChatRoomProps = {
+  roomID: string;
   roomName: string;
   numberOfMembers?: number;
   myName: string;
+  sendJsonMessage: (message: Message) => void;
+  messageHistory: Message[];
 };
 
 export default function ChatRoom(props: ChatRoomProps) {
-  const { roomName, numberOfMembers, myName } = props;
+  const { roomID, numberOfMembers, myName, messageHistory, sendJsonMessage } =
+    props;
   const [reply, setReply] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
 
-  const { sendJsonMessage, lastJsonMessage } = useWebSocket(
-    "ws://localhost:8000/ws" +
-      "?session_id=" +
-      localStorage.getItem("SessionId"),
-    {
-      onOpen: () => console.log("opened"),
-      onClose: () => console.log("closed"),
-      onError: (event) => console.error("error", event),
-      onMessage: (event) => console.log("message", event.data),
-    },
+  const { user: user, messages: chatMessages } = useChatHistory(
+    messageHistory,
+    roomID,
+    myName,
   );
-  useEffect(() => {
-    if (lastJsonMessage) {
-      const message = lastJsonMessage as Message;
-      setMessages((prev) => [...prev, message]);
-    }
-  }, [lastJsonMessage]);
 
   const roomHeight = useRef<HTMLDivElement>(null);
 
@@ -60,10 +50,9 @@ export default function ChatRoom(props: ChatRoomProps) {
     const message = {
       event: reply ? MessageEvents.REPLIES : MessageEvents.MESSAGE,
       data: myName + ":" + text,
-      roomID: roomName,
+      roomID: roomID,
     };
     sendJsonMessage(message);
-    // console.log("sent", message);
     e.currentTarget.reset();
     setReply(null);
   };
@@ -73,11 +62,13 @@ export default function ChatRoom(props: ChatRoomProps) {
       <div className="h1 flex h-10 w-full flex-row items-center gap-[10px] rounded-t-lg border-b-2 border-b-brown bg-green px-3 py-1 font-bold text-brown">
         <Image src="/icon-svg/message.svg" width={24} height={24} alt="chat" />
         <div>
-          {roomName}{" "}
+          {user}{" "}
           {numberOfMembers && numberOfMembers > 999 ? (
             <span>(999+)</span>
-          ) : (
+          ) : numberOfMembers ? (
             <span>({numberOfMembers})</span>
+          ) : (
+            ""
           )}
         </div>
       </div>
@@ -85,7 +76,7 @@ export default function ChatRoom(props: ChatRoomProps) {
         className="flex h-full flex-col gap-[10px] overflow-scroll p-3 scrollbar-hide"
         ref={roomHeight}
       >
-        {messages.map((message, index) => {
+        {chatMessages.map((message, index) => {
           return (
             <ChatBox
               key={index}

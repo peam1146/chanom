@@ -19,12 +19,6 @@ export default function CreateCommuModal(prop: CreateCommuModalProps) {
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name");
     try {
-      // sendJsonMessage("Create Community", "Create Success", name);
-      // sendJsonMessage(
-      //   "Register Community",
-      //   localStorage.getItem("SessionId"),
-      //   name,
-      // );
       const createCommunityMessage: Message = {
         event: MessageEvents.CREATE_COMMUNITY,
         data: "Create Success",
@@ -38,8 +32,6 @@ export default function CreateCommuModal(prop: CreateCommuModalProps) {
 
       sendJsonMessage(createCommunityMessage);
       sendJsonMessage(registerCommunityMessage);
-      console.log("Create Community", createCommunityMessage);
-      console.log("Register Community", registerCommunityMessage);
       setIsOpen(false);
     } catch (err) {
       setError("This name is already existed.");
