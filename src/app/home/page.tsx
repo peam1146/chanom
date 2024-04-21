@@ -36,7 +36,10 @@ export default function Page() {
   return (
     <div className="flex h-screen w-screen items-center justify-center gap-5">
       <div className="flex flex-col gap-5">
-        <PeepBox />
+        <PeepBox
+          sendJsonMessage={handleClickSendMessage}
+          messageHistory={messageHistory}
+        />
         <CommunityBox
           sendJsonMessage={handleClickSendMessage}
           messageHistory={messageHistory}
