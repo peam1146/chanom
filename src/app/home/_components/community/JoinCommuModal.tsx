@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 type JoinCommuModalProps = {
   name: string;
   setIsOpen: (value: boolean) => void;
+  sendMessage: (event: string, data: string, roomId: string) => void;
 };
 
 export default function JoinCommuModal(prop: JoinCommuModalProps) {
-  const { name, setIsOpen } = prop;
+  const { name, setIsOpen, sendMessage } = prop;
 
   const handleClick = () => {
-    console.log(`Join ${name} success`);
+    sendMessage("Register Community", localStorage.getItem("SessionId"), name);
     setIsOpen(false);
   };
 

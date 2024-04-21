@@ -7,13 +7,45 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/dialog";
 import { useState } from "react";
 import CreateCommuModal from "./CreateCommuModal";
+import useWebSocket from "react-use-websocket";
 
-function CreateCommunityModal() {
-  return <div></div>;
-}
+type MessageValue = {
+  event: string;
+  data: string;
+  room: string;
+  createAt: Date;
+};
 
-export default function CommunityBox() {
+type CommunityBoxProps = {
+  sendMessage: (event: string, data: string, roomId: string) => void;
+  messageHistory: MessageValue[];
+};
+export default function CommunityBox(prop: CommunityBoxProps) {
+  const { sendMessage, messageHistory } = prop;
   const [isOpen, setIsOpen] = useState(false);
+
+  const communities = messageHistory.filter(
+    (message) => message.event === "Create Community",
+  );
+
+  const register = messageHistory.filter(
+    (message) => message.event === "Register Community",
+  );
+
+  const filterCommunities = communities.map((community) => {
+    const memberCommunity = register.filter(
+      (message) => message.room === community.room,
+    );
+    console.log(memberCommunity);
+    return {
+      ...community,
+      numberMember: memberCommunity.length,
+      isRegistered: memberCommunity.some(
+        (message) => message.data === localStorage.getItem("SessionId"),
+      ),
+    };
+  });
+
   return (
     <>
       <div className="flex h-[308px] w-[380px] flex-col overflow-hidden rounded-lg border-2 border-brown shadow-window">
@@ -37,29 +69,20 @@ export default function CommunityBox() {
           <CommunityRoom
             name="We love Chanom"
             numberOfMembers={200000000}
+            isRegistered={true}
             isChating={true}
+            sendMessage={sendMessage}
           />
-          <CommunityRoom
-            name="Maltese Lover"
-            numberOfMembers={99}
-            isChating={false}
-          />
-          <CommunityRoom
-            name="9 ขุนเขา 8 ศรีธนร 1 โลกธาตุ พันจักรวาลรวมเป็นสหโลกธาตุ ตรีสหโลกธาตุ รวมกันเเล้วไม่มีสิ่งใดที่ตัดไม่ได้"
-            numberOfMembers={11}
-            isChating={false}
-          />
-          <CommunityRoom name="F4" numberOfMembers={90} isChating={false} />
-          <CommunityRoom
-            name="10 20 30 40"
-            numberOfMembers={88}
-            isChating={false}
-          />
-          <CommunityRoom
-            name="Tictoker"
-            numberOfMembers={88}
-            isChating={false}
-          />
+          {filterCommunities.map((msg) => (
+            <CommunityRoom
+              key={msg.room} // Add a unique key prop for each element in the list
+              name={msg.room}
+              numberOfMembers={msg.numberMember}
+              isRegistered={msg.isRegistered}
+              isChating={false}
+              sendMessage={sendMessage}
+            />
+          ))}
         </div>
       </div>
       <Modal
@@ -67,7 +90,7 @@ export default function CommunityBox() {
         onOpenChange={setIsOpen}
         className="h-[276px] w-[356px] border-none p-0"
       >
-        <CreateCommuModal setIsOpen={setIsOpen} />
+        <CreateCommuModal setIsOpen={setIsOpen} sendMessage={sendMessage} />
       </Modal>
     </>
   );
