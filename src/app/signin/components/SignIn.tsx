@@ -37,6 +37,7 @@ export default function SignIn() {
             // Store the session ID in localStorage
             if (typeof localStorage !== 'undefined') {
               localStorage.setItem('SessionId', sessionId);
+              localStorage.setItem('username', username);
             }
           })
 

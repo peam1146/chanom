@@ -19,7 +19,9 @@ export default function ChatRoom(props: ChatRoomProps) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
-    "ws://localhost:8000/ws" + "?session_id=2517814484082876365",
+    "ws://localhost:8000/ws" +
+      "?session_id=" +
+      localStorage.getItem("SessionId"),
     {
       onOpen: () => console.log("opened"),
       onClose: () => console.log("closed"),
@@ -27,10 +29,9 @@ export default function ChatRoom(props: ChatRoomProps) {
       onMessage: (event) => console.log("message", event.data),
     },
   );
-
   useEffect(() => {
     if (lastJsonMessage) {
-      const message = lastJsonMessage;
+      const message = lastJsonMessage as Message;
       setMessages((prev) => [...prev, message]);
     }
   }, [lastJsonMessage]);
@@ -84,32 +85,12 @@ export default function ChatRoom(props: ChatRoomProps) {
         className="flex h-full flex-col gap-[10px] overflow-scroll p-3 scrollbar-hide"
         ref={roomHeight}
       >
-        <ChatBox
-          message="Yes, I want to be your gf."
-          isMe={true}
-          read={3}
-          replyMessage="Do you want to be my gf?"
-          reactions={[
-            { type: "heart" },
-            { type: "like" },
-            { type: "ok" },
-            { type: "skull" },
-            { type: "star" },
-            { type: "fire" },
-            { type: "heart" },
-            { type: "heart" },
-            { type: "heart" },
-            { type: "heart" },
-            { type: "heart" },
-          ]}
-          setReply={setReply}
-        />
         {messages.map((message, index) => {
           return (
             <ChatBox
               key={index}
               message={message.data.split(":")[1]}
-              isMe={checkMyMessage(myName, message)}
+              sender={message.data.split(":")[0]}
             />
           );
         })}
@@ -138,6 +119,35 @@ export default function ChatRoom(props: ChatRoomProps) {
       px-3 py-2 font-bold text-brown placeholder-chanom placeholder:font-bold focus:border-transparent focus:outline-brown focus:ring-brown"
             placeholder="Type a message..."
             name="message"
+          />
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export function EmptyChatRoom() {
+  return (
+    <div className="flex h-[668px] w-[480px] flex-col rounded-lg border-2 border-brown bg-cream shadow-window">
+      <div className="h1 flex h-10 w-full flex-row items-center gap-[10px] rounded-t-lg border-b-2 border-b-brown bg-green px-3 py-1 font-bold text-brown">
+        <Image src="/icon-svg/message.svg" width={24} height={24} alt="chat" />
+        <div>Chat Room</div>
+      </div>
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <Image
+          src="/icon-svg/empty-chat.svg"
+          width={64}
+          height={64}
+          alt="chat"
+        />
+      </div>
+      <div className="flex w-full flex-col">
+        <form>
+          <input
+            className="h-12 w-full rounded-b-lg border-2 border-t-brown bg-cream
+      px-3 py-2 font-bold text-brown placeholder-chanom placeholder:font-bold focus:border-transparent focus:outline-brown focus:ring-brown"
+            placeholder="Type a message..."
+            disabled
           />
         </form>
       </div>

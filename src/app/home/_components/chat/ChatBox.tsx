@@ -11,10 +11,11 @@ import {
 } from "@radix-ui/react-popover";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { checkMyMessage } from "@/lib/socket/chatroom";
 
 type ChatBoxProps = {
   message: string;
-  isMe: boolean;
+  sender: string;
   replyMessage?: string;
   read?: number;
   reactions?: ReactionProps[];
@@ -22,7 +23,9 @@ type ChatBoxProps = {
 };
 
 export default function ChatBox(props: ChatBoxProps) {
-  const { isMe, read, reactions } = props;
+  const { sender, read, reactions } = props;
+  const myName = localStorage.getItem("username") || "me";
+  const isMe = sender === myName;
   const justify = isMe ? "items-end" : "items-start";
   const [open, setOpen] = useState(false);
 
@@ -32,7 +35,7 @@ export default function ChatBox(props: ChatBoxProps) {
   };
   return (
     <div className={cn("flex h-fit w-full flex-col", justify)}>
-      {!isMe && <div className="h1 font-bold text-brown">Mild mumu</div>}
+      {!isMe && <div className="h1 font-bold text-brown">{sender}</div>}
       <ReplyChatBox {...props} />
       <div className="flex flex-row gap-2">
         {isMe && read && (
@@ -61,7 +64,9 @@ export default function ChatBox(props: ChatBoxProps) {
 }
 
 function ChatMessage(props: ChatBoxProps) {
-  const { message, isMe } = props;
+  const { message, sender } = props;
+  const myName = localStorage.getItem("username") || "me";
+  const isMe = sender === myName;
   const background = isMe ? "bg-green" : "bg-mustard";
   return (
     <span
@@ -76,7 +81,9 @@ function ChatMessage(props: ChatBoxProps) {
 }
 
 function ReplyChatBox(props: ChatBoxProps) {
-  const { isMe, replyMessage } = props;
+  const { sender, replyMessage } = props;
+  const myName = localStorage.getItem("username") || "me";
+  const isMe = sender === myName;
   const justify = isMe ? "justify-end" : "justify-start";
   return (
     <div className={cn("flex h-fit w-full flex-row gap-1 pb-1", justify)}>
@@ -94,7 +101,9 @@ function ReplyChatBox(props: ChatBoxProps) {
 }
 
 function ReactionGroup(props: ChatBoxProps) {
-  let { reactions, isMe } = props;
+  let { reactions, sender } = props;
+  const myName = localStorage.getItem("username") || "me";
+  const isMe = sender === myName;
   return (
     <div className="flex flex-row-reverse gap-1 pt-1">
       {reactions

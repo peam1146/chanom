@@ -61,7 +61,7 @@ export default function Page() {
           messageHistory={messageHistory}
         />
       </div>
-      <ChatRoom roomName="Panda's Room" numberOfMembers={40} myName={myName} />
+      <ChatRoom roomName="general" numberOfMembers={0} myName={myName} />
     </div>
   );
 }
