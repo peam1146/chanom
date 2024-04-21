@@ -6,11 +6,12 @@ import { cn } from "@/lib/utils";
 
 type PeepRoomProps = {
   name: string;
+  roomId: string;
   isChating: boolean;
 };
 
 export default function PeepRoom(prop: PeepRoomProps) {
-  const { name, isChating } = prop;
+  const { name, roomId, isChating } = prop;
 
   return (
     <div

@@ -11,7 +11,7 @@ type MessageValue = {
   event: string;
   data: string;
   room: string;
-  createAt: Date;
+  createdAt: Date;
 };
 
 export default function Page() {
@@ -20,12 +20,22 @@ export default function Page() {
 
   const [messageHistory, setMessageHistory] = useState<MessageValue[]>([]);
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(WS_URL);
+  const { sendMessage, lastMessage, readyState } = useWebSocket(WS_URL, {
+    heartbeat: {
+      message: JSON.stringify({
+        Event: "Active",
+        Data: SessionId,
+        RoomID: SessionId,
+      }),
+      interval: 1000,
+    },
+  });
 
   useEffect(() => {
     if (lastMessage !== null) {
       const message = JSON.parse(lastMessage.data);
       setMessageHistory((prev) => prev.concat(message));
+      console.log(messageHistory);
     }
   }, [lastMessage]);
 
@@ -55,7 +65,10 @@ export default function Page() {
   return (
     <div className="flex h-screen w-screen items-center justify-center gap-5">
       <div className="flex flex-col gap-5">
-        <PeepBox />
+        <PeepBox
+          sendMessage={handleClickSendMessage}
+          messageHistory={messageHistory}
+        />
         <CommunityBox
           sendMessage={handleClickSendMessage}
           messageHistory={messageHistory}

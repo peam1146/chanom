@@ -13,7 +13,7 @@ type MessageValue = {
   event: string;
   data: string;
   room: string;
-  createAt: Date;
+  createdAt: Date;
 };
 
 type CommunityBoxProps = {
