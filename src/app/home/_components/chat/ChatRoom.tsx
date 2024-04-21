@@ -1,27 +1,68 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatBox from "./ChatBox";
 import Image from "next/image";
 import CloseButton from "../CloseButton";
+import useWebSocket from "react-use-websocket";
+import { MessageEvents, Message } from "@/lib/socket/types";
+import { checkMyMessage } from "@/lib/socket/chatroom";
+
 type ChatRoomProps = {
   roomName: string;
   numberOfMembers?: number;
+  myName: string;
 };
 
 export default function ChatRoom(props: ChatRoomProps) {
-  const { roomName, numberOfMembers } = props;
+  const { roomName, numberOfMembers, myName } = props;
   const [reply, setReply] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const { sendJsonMessage, lastJsonMessage } = useWebSocket(
+    "ws://localhost:8000/ws" + "?session_id=2517814484082876365",
+    {
+      onOpen: () => console.log("opened"),
+      onClose: () => console.log("closed"),
+      onError: (event) => console.error("error", event),
+      onMessage: (event) => console.log("message", event.data),
+    },
+  );
+
+  useEffect(() => {
+    if (lastJsonMessage) {
+      const message = lastJsonMessage;
+      setMessages((prev) => [...prev, message]);
+    }
+  }, [lastJsonMessage]);
+
+  const roomHeight = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (roomHeight.current) {
+      roomHeight.current.addEventListener("DOMNodeInserted", (event) => {
+        const { currentTarget: target } = event as unknown as {
+          currentTarget: HTMLDivElement;
+        };
+        target.scroll({
+          top: target.scrollHeight,
+          behavior: "smooth",
+        });
+      });
+    }
+  }, []);
 
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const message = formData.get("message") as string;
-    if (message) {
-      console.log({
-        message,
-        reply,
-      });
-    }
+    const text = formData.get("message") as string;
+    if (!text) return;
+    const message = {
+      event: reply ? MessageEvents.REPLIES : MessageEvents.MESSAGE,
+      data: myName + ":" + text,
+      roomID: roomName,
+    };
+    sendJsonMessage(message);
+    // console.log("sent", message);
     e.currentTarget.reset();
     setReply(null);
   };
@@ -39,27 +80,10 @@ export default function ChatRoom(props: ChatRoomProps) {
           )}
         </div>
       </div>
-      <div className="flex h-full flex-col gap-[10px] overflow-scroll p-3 scrollbar-hide">
-        <ChatBox
-          message="Hi, cutie. Do you have an bf?"
-          isMe={false}
-          read={10}
-          setReply={setReply}
-        />
-        <ChatBox
-          message="No, I don't have a bf."
-          isMe={true}
-          read={5}
-          setReply={setReply}
-        />
-        <ChatBox
-          message="Do you want to be my gf?"
-          isMe={false}
-          replyMessage="No, I don't have a bf."
-          read={4}
-          setReply={setReply}
-          reactions={[{ type: "heart" }, { type: "like" }, { type: "ok" }]}
-        />
+      <div
+        className="flex h-full flex-col gap-[10px] overflow-scroll p-3 scrollbar-hide"
+        ref={roomHeight}
+      >
         <ChatBox
           message="Yes, I want to be your gf."
           isMe={true}
@@ -80,45 +104,15 @@ export default function ChatRoom(props: ChatRoomProps) {
           ]}
           setReply={setReply}
         />
-        <ChatBox
-          message="Hi, cutie. Do you have an bf?"
-          isMe={false}
-          read={10}
-          setReply={setReply}
-        />
-        <ChatBox
-          message="No, I don't have a bf.No, I don't have a bf.No, I don't have a bf.No, I don't have a bf.No, I don't have a bf."
-          isMe={true}
-          read={5}
-          setReply={setReply}
-        />
-        <ChatBox
-          message="Do you want to be my gf?"
-          isMe={false}
-          replyMessage="No, I don't have a bf.No, I don't have a bf.No, I don't have a bf.No, I don't have a bf.No, I don't have a bf."
-          read={4}
-          setReply={setReply}
-        />
-        <ChatBox
-          message="Yes, I want to be your gf."
-          isMe={true}
-          read={3}
-          replyMessage="Do you want to be my gf?"
-          reactions={[
-            { type: "heart" },
-            { type: "like" },
-            { type: "ok" },
-            { type: "skull" },
-            { type: "star" },
-            { type: "fire" },
-            { type: "heart" },
-            { type: "heart" },
-            { type: "heart" },
-            { type: "heart" },
-            { type: "heart" },
-          ]}
-          setReply={setReply}
-        />
+        {messages.map((message, index) => {
+          return (
+            <ChatBox
+              key={index}
+              message={message.data.split(":")[1]}
+              isMe={checkMyMessage(myName, message)}
+            />
+          );
+        })}
       </div>
       <div className="flex w-full flex-col">
         {reply && (
