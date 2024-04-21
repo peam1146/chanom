@@ -4,20 +4,50 @@ import Image from "next/image";
 import Chanom from "../../../../public/icon-svg/chanom.svg";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function SignIn() {
-
-    const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const route = useRouter()
+    const [errorMsg,setErrorMsg] = useState<String>('')
+    
+    const formSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const username = formData.get("username") as string;
         const password = formData.get("password") as string;
-          console.log({
-            username,
-            password
-          });
-          e.currentTarget.reset();
+        try{
+          await fetch("http://localhost:8000/signin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: username,
+              password: password,
+            }),
+          
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error();
+            }
+            return response.text(); // Extract the response body as text
+          })
+          .then(sessionId => {
+            // Store the session ID in localStorage
+            if (typeof localStorage !== 'undefined') {
+              localStorage.setItem('SessionId', sessionId);
+            }
+          })
 
+          
+          route.push('../home');
+        
+
+      }
+        catch(err){
+          setErrorMsg("Username or Password is wrong.")
+        }
       };
 
   return (
@@ -41,6 +71,7 @@ export default function SignIn() {
             placeholder="Password"
             name="password"
           ></input>
+          {errorMsg && <p className="h2 self-center font-bold text-orange">{errorMsg}</p>}
           <Button size='lg' type="submit" className="self-center w-[91px]">
             Start
           </Button>

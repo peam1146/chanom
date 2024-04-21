@@ -4,10 +4,12 @@ import Image from "next/image";
 import Chanom from "../../../../public/icon-svg/chanom.svg";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
+    const route = useRouter()
 
-    const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const formSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const username = formData.get("username") as string;
@@ -16,9 +18,30 @@ export default function SignUp() {
             username,
             password
           });
-          e.currentTarget.reset();
+        try{
+        const response = await fetch("http://localhost:8000/signup",{
+        method: "POST",
+        headers:{
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: username,
+            password: password
+        })} 
+      )
+      if (!response.ok) {
+        throw new Error();
+      }
+  
+        route.push('../signin');
 
-      };
+    }
+      catch(err){
+      
+      console.log(err)
+      
+      }
+    }
 
   return (
     <div className="h-[308 px] my-auto flex w-[372px] flex-col rounded-lg border-2 border-brown overflow-hidden shadow-window">
