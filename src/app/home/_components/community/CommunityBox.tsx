@@ -7,36 +7,28 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/dialog";
 import { useState } from "react";
 import CreateCommuModal from "./CreateCommuModal";
-import useWebSocket from "react-use-websocket";
-
-type MessageValue = {
-  event: string;
-  data: string;
-  room: string;
-  createAt: Date;
-};
+import { Message, MessageEvents } from "@/lib/socket/types";
 
 type CommunityBoxProps = {
-  sendMessage: (event: string, data: string, roomId: string) => void;
-  messageHistory: MessageValue[];
+  sendJsonMessage: (message: Message) => void;
+  messageHistory: Message[];
 };
 export default function CommunityBox(prop: CommunityBoxProps) {
-  const { sendMessage, messageHistory } = prop;
+  const { sendJsonMessage, messageHistory } = prop;
   const [isOpen, setIsOpen] = useState(false);
 
   const communities = messageHistory.filter(
-    (message) => message.event === "Create Community",
+    (message) => message.event === MessageEvents.CREATE_COMMUNITY,
   );
-
   const register = messageHistory.filter(
-    (message) => message.event === "Register Community",
+    (message) => message.event === MessageEvents.REGISTER_COMMUNITY,
   );
 
   const filterCommunities = communities.map((community) => {
     const memberCommunity = register.filter(
       (message) => message.room === community.room,
     );
-    console.log(memberCommunity);
+    console.log(community);
     return {
       ...community,
       numberMember: memberCommunity.length,
@@ -71,16 +63,16 @@ export default function CommunityBox(prop: CommunityBoxProps) {
             numberOfMembers={200000000}
             isRegistered={true}
             isChating={true}
-            sendMessage={sendMessage}
+            sendJsonMessage={sendJsonMessage}
           />
           {filterCommunities.map((msg) => (
             <CommunityRoom
-              key={msg.room} // Add a unique key prop for each element in the list
+              key={msg.room}
               name={msg.room}
               numberOfMembers={msg.numberMember}
               isRegistered={msg.isRegistered}
               isChating={false}
-              sendMessage={sendMessage}
+              sendJsonMessage={sendJsonMessage}
             />
           ))}
         </div>
@@ -90,7 +82,10 @@ export default function CommunityBox(prop: CommunityBoxProps) {
         onOpenChange={setIsOpen}
         className="h-[276px] w-[356px] border-none p-0"
       >
-        <CreateCommuModal setIsOpen={setIsOpen} sendMessage={sendMessage} />
+        <CreateCommuModal
+          setIsOpen={setIsOpen}
+          sendJsonMessage={sendJsonMessage}
+        />
       </Modal>
     </>
   );

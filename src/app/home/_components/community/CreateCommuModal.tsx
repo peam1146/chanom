@@ -2,14 +2,15 @@ import Image from "next/image";
 import Chanom from "../../../../../public/icon-svg/chanom.svg";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Message, MessageEvents } from "@/lib/socket/types";
 
 type CreateCommuModalProps = {
   setIsOpen: (value: boolean) => void;
-  sendMessage: (event: string, data: string, roomId: string) => void;
+  sendJsonMessage: (message: Message) => void;
 };
 
 export default function CreateCommuModal(prop: CreateCommuModalProps) {
-  const { setIsOpen, sendMessage } = prop;
+  const { setIsOpen, sendJsonMessage } = prop;
 
   const [error, setError] = useState<String>("");
 
@@ -18,12 +19,27 @@ export default function CreateCommuModal(prop: CreateCommuModalProps) {
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name");
     try {
-      sendMessage("Create Community", "Create Success", name);
-      sendMessage(
-        "Register Community",
-        localStorage.getItem("SessionId"),
-        name,
-      );
+      // sendJsonMessage("Create Community", "Create Success", name);
+      // sendJsonMessage(
+      //   "Register Community",
+      //   localStorage.getItem("SessionId"),
+      //   name,
+      // );
+      const createCommunityMessage: Message = {
+        event: MessageEvents.CREATE_COMMUNITY,
+        data: "Create Success",
+        roomID: name as string,
+      };
+      const registerCommunityMessage: Message = {
+        event: MessageEvents.REGISTER_COMMUNITY,
+        data: localStorage.getItem("SessionId") as string,
+        roomID: name as string,
+      };
+
+      sendJsonMessage(createCommunityMessage);
+      sendJsonMessage(registerCommunityMessage);
+      console.log("Create Community", createCommunityMessage);
+      console.log("Register Community", registerCommunityMessage);
       setIsOpen(false);
     } catch (err) {
       setError("This name is already existed.");

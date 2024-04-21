@@ -6,17 +6,18 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Modal } from "@/components/ui/dialog";
 import JoinCommuModal from "./JoinCommuModal";
-
+import { Message as MESSAGE } from "@/lib/socket/types";
 type CommunityRoomProps = {
   name: string;
   numberOfMembers: number;
   isChating: boolean;
   isRegistered: boolean;
-  sendMessage: (event: string, data: string, roomId: string) => void;
+  sendJsonMessage: (message: MESSAGE) => void;
 };
 
 export default function CommunityRoom(prop: CommunityRoomProps) {
-  const { name, numberOfMembers, isChating, isRegistered, sendMessage } = prop;
+  const { name, numberOfMembers, isChating, isRegistered, sendJsonMessage } =
+    prop;
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -59,7 +60,7 @@ export default function CommunityRoom(prop: CommunityRoomProps) {
         <JoinCommuModal
           name={name}
           setIsOpen={setIsOpen}
-          sendMessage={sendMessage}
+          sendJsonMessage={sendJsonMessage}
         />
       </Modal>
     </>
