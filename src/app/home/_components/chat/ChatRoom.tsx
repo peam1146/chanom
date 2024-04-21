@@ -62,7 +62,7 @@ export default function ChatRoom(props: ChatRoomProps) {
       <div className="h1 flex h-10 w-full flex-row items-center gap-[10px] rounded-t-lg border-b-2 border-b-brown bg-green px-3 py-1 font-bold text-brown">
         <Image src="/icon-svg/message.svg" width={24} height={24} alt="chat" />
         <div>
-          {user}{" "}
+          {user ? user : roomID}
           {numberOfMembers && numberOfMembers > 999 ? (
             <span>(999+)</span>
           ) : numberOfMembers ? (

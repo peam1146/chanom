@@ -8,16 +8,23 @@ import { Modal } from "@/components/ui/dialog";
 import JoinCommuModal from "./JoinCommuModal";
 import { Message as MESSAGE } from "@/lib/socket/types";
 type CommunityRoomProps = {
-  name: string;
+  roomID: string;
   numberOfMembers: number;
   isChating: boolean;
   isRegistered: boolean;
   sendJsonMessage: (message: MESSAGE) => void;
+  setRoomID: (roomID: string) => void;
 };
 
 export default function CommunityRoom(prop: CommunityRoomProps) {
-  const { name, numberOfMembers, isChating, isRegistered, sendJsonMessage } =
-    prop;
+  const {
+    roomID,
+    numberOfMembers,
+    isChating,
+    isRegistered,
+    sendJsonMessage,
+    setRoomID,
+  } = prop;
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -30,13 +37,14 @@ export default function CommunityRoom(prop: CommunityRoomProps) {
         onClick={(e) => {
           if (!isRegistered) setIsOpen(true);
           if (!isChating) console.log("goChat!!!");
+          if (isRegistered) setRoomID(roomID);
         }}
       >
         <div className="rounded-full border-2 border-brown bg-mustard p-1">
           <Image src={Group} width={32} height={30} alt="Group Icon" />
         </div>
         <div className="h1 my-auto flex max-w-[256px] flex-1 gap-1 font-bold text-brown">
-          <p className="truncate">{name}</p>{" "}
+          <p className="truncate">{roomID}</p>{" "}
           {numberOfMembers && numberOfMembers > 999 ? (
             <span>(999+)</span>
           ) : (
@@ -58,7 +66,7 @@ export default function CommunityRoom(prop: CommunityRoomProps) {
         className="h-[276px] w-[356px] border-none p-0"
       >
         <JoinCommuModal
-          name={name}
+          roomID={roomID}
           setIsOpen={setIsOpen}
           sendJsonMessage={sendJsonMessage}
         />

@@ -12,9 +12,10 @@ import { Message, MessageEvents } from "@/lib/socket/types";
 type CommunityBoxProps = {
   sendJsonMessage: (message: Message) => void;
   messageHistory: Message[];
+  setRoomID: (roomID: string) => void;
 };
 export default function CommunityBox(prop: CommunityBoxProps) {
-  const { sendJsonMessage, messageHistory } = prop;
+  const { sendJsonMessage, messageHistory, setRoomID } = prop;
   const [isOpen, setIsOpen] = useState(false);
 
   const communities = messageHistory.filter(
@@ -57,21 +58,15 @@ export default function CommunityBox(prop: CommunityBoxProps) {
           </Button>
         </div>
         <div className="flex-1 overflow-scroll bg-cream scrollbar-hide">
-          <CommunityRoom
-            name="We love Chanom"
-            numberOfMembers={200000000}
-            isRegistered={true}
-            isChating={true}
-            sendJsonMessage={sendJsonMessage}
-          />
           {filterCommunities.map((msg) => (
             <CommunityRoom
               key={msg.room}
-              name={msg.room}
+              roomID={msg.room}
               numberOfMembers={msg.numberMember}
               isRegistered={msg.isRegistered}
               isChating={false}
               sendJsonMessage={sendJsonMessage}
+              setRoomID={setRoomID}
             />
           ))}
         </div>

@@ -57,6 +57,7 @@ export default function Page() {
         <CommunityBox
           sendJsonMessage={handleClickSendMessage}
           messageHistory={messageHistory}
+          setRoomID={setRoomID}
         />
       </div>
       <ChatRoom
