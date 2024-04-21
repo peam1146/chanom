@@ -11,11 +11,14 @@ type CommunityRoomProps = {
   name: string;
   numberOfMembers: number;
   isChating: boolean;
+  isRegistered: boolean;
+  sendMessage: (event: string, data: string, roomId: string) => void;
 };
 
 export default function CommunityRoom(prop: CommunityRoomProps) {
-  const { name, numberOfMembers, isChating } = prop;
+  const { name, numberOfMembers, isChating, isRegistered, sendMessage } = prop;
   const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
       <div
@@ -24,7 +27,8 @@ export default function CommunityRoom(prop: CommunityRoomProps) {
           isChating ? "bg-mayonnaise" : "cursor-pointer bg-white",
         )}
         onClick={(e) => {
-          if (!isChating) setIsOpen(true);
+          if (!isRegistered) setIsOpen(true);
+          if (!isChating) console.log("goChat!!!");
         }}
       >
         <div className="rounded-full border-2 border-brown bg-mustard p-1">
@@ -52,7 +56,11 @@ export default function CommunityRoom(prop: CommunityRoomProps) {
         onOpenChange={setIsOpen}
         className="h-[276px] w-[356px] border-none p-0"
       >
-        <JoinCommuModal name={name} setIsOpen={setIsOpen} />
+        <JoinCommuModal
+          name={name}
+          setIsOpen={setIsOpen}
+          sendMessage={sendMessage}
+        />
       </Modal>
     </>
   );

@@ -5,22 +5,28 @@ import { useState } from "react";
 
 type CreateCommuModalProps = {
   setIsOpen: (value: boolean) => void;
+  sendMessage: (event: string, data: string, roomId: string) => void;
 };
 
 export default function CreateCommuModal(prop: CreateCommuModalProps) {
-  const { setIsOpen } = prop;
+  const { setIsOpen, sendMessage } = prop;
 
-  const [error, setError] = useState<String | null>();
+  const [error, setError] = useState<String>("");
 
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name");
-    if (name == "ซ้ำ") {
-      setError("This name is already existed.");
-    } else {
-      console.log(name);
+    try {
+      sendMessage("Create Community", "Create Success", name);
+      sendMessage(
+        "Register Community",
+        localStorage.getItem("SessionId"),
+        name,
+      );
       setIsOpen(false);
+    } catch (err) {
+      setError("This name is already existed.");
     }
   };
 
