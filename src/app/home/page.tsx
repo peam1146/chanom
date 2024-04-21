@@ -20,7 +20,7 @@ export default function Page() {
 
   const [messageHistory, setMessageHistory] = useState<Message[]>([]);
 
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(WS_URL);
+  const { sendMessage, lastMessage, readyState } = useWebSocket(WS_URL);
 
   useEffect(() => {
     if (lastJsonMessage !== null) {
