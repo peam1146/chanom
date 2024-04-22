@@ -35,8 +35,7 @@ export default function CommunityRoom(prop: CommunityRoomProps) {
           isChating ? "bg-mayonnaise" : "cursor-pointer bg-white",
         )}
         onClick={(e) => {
-          if (!isRegistered) setIsOpen(true);
-          if (isRegistered) setRoomID(roomID);
+          isRegistered ? setRoomID(roomID) : setIsOpen(true);
         }}
       >
         <div className="rounded-full border-2 border-brown bg-mustard p-1">

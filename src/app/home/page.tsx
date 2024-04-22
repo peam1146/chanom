@@ -61,12 +61,14 @@ export default function Page() {
         <PeepBox
           sendJsonMessage={handleClickSendMessage}
           activeUser={activeUser}
+          currentRoomID={roomID}
           setRoomID={setRoomID}
         />
         <CommunityBox
           sendJsonMessage={handleClickSendMessage}
           community={community}
           register={register}
+          currentRoomID={roomID}
           setRoomID={setRoomID}
         />
       </div>

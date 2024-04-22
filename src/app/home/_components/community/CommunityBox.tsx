@@ -13,10 +13,12 @@ type CommunityBoxProps = {
   sendJsonMessage: (message: Message) => void;
   community: Message[];
   register: Message[];
+  currentRoomID: string;
   setRoomID: (roomID: string) => void;
 };
 export default function CommunityBox(prop: CommunityBoxProps) {
-  const { sendJsonMessage, community, register, setRoomID } = prop;
+  const { sendJsonMessage, community, register, currentRoomID, setRoomID } =
+    prop;
   const [isOpen, setIsOpen] = useState(false);
 
   const filterCommunities = community.map((community) => {
@@ -58,7 +60,7 @@ export default function CommunityBox(prop: CommunityBoxProps) {
               roomID={message.room}
               numberOfMembers={message.numberMember}
               isRegistered={message.isRegistered}
-              isChating={false}
+              isChating={message.room === currentRoomID}
               sendJsonMessage={sendJsonMessage}
               setRoomID={setRoomID}
             />

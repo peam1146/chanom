@@ -6,11 +6,12 @@ import { Message } from "@/lib/socket/types";
 type PeepBoxProps = {
   sendJsonMessage: (message: Message) => void;
   activeUser: Message[];
+  currentRoomID: string;
   setRoomID: (roomID: string) => void;
 };
 
 export default function PeepBox(prop: PeepBoxProps) {
-  const { activeUser, setRoomID, sendJsonMessage } = prop;
+  const { sendJsonMessage, activeUser, currentRoomID, setRoomID } = prop;
   const SessionId = localStorage.getItem("SessionId");
   const ActiveUser = activeUser
     .reduce((filteredMessages: Message[], message) => {
@@ -61,7 +62,7 @@ export default function PeepBox(prop: PeepBoxProps) {
               key={roomId}
               name={message.data}
               roomID={roomId}
-              isChating={false}
+              isChating={roomId === currentRoomID}
               setRoomID={setRoomID}
               sendJsonMessage={sendJsonMessage}
             />
