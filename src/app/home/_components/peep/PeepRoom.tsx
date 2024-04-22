@@ -4,7 +4,6 @@ import User from "../../../../../public/icon-svg/user.svg";
 import Message from "../../../../../public/icon-svg/message.svg";
 import { cn } from "@/lib/utils";
 import { Message as MESSAGE, MessageEvents } from "@/lib/socket/types";
-import { send } from "process";
 
 type PeepRoomProps = {
   name: string;

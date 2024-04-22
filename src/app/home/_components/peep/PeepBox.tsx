@@ -55,19 +55,29 @@ export default function PeepBox(prop: PeepBoxProps) {
         </div>
       </div>
       <div className="flex-1 overflow-scroll  bg-cream scrollbar-hide">
-        {ActiveUser.sort().map((message) => {
-          const roomId = [message.room, SessionId].sort().join("_");
-          return (
-            <PeepRoom
-              key={roomId}
-              name={message.data}
-              roomID={roomId}
-              isChating={roomId === currentRoomID}
-              setRoomID={setRoomID}
-              sendJsonMessage={sendJsonMessage}
-            />
-          );
-        })}
+        {ActiveUser.length ? (
+          ActiveUser.sort().map((message) => {
+            const roomId = [message.room, SessionId].sort().join("_");
+            return (
+              <PeepRoom
+                key={roomId}
+                name={message.data}
+                roomID={roomId}
+                isChating={roomId === currentRoomID}
+                setRoomID={setRoomID}
+                sendJsonMessage={sendJsonMessage}
+              />
+            );
+          })
+        ) : (
+          <Image
+            src={User}
+            width={80}
+            height={80}
+            className="m-auto h-full opacity-20"
+            alt="Group Icon"
+          />
+        )}
       </div>
     </div>
   );

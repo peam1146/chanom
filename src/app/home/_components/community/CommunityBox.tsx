@@ -54,17 +54,27 @@ export default function CommunityBox(prop: CommunityBoxProps) {
           </Button>
         </div>
         <div className="flex-1 overflow-scroll bg-cream scrollbar-hide">
-          {filterCommunities.map((message) => (
-            <CommunityRoom
-              key={message.room}
-              roomID={message.room}
-              numberOfMembers={message.numberMember}
-              isRegistered={message.isRegistered}
-              isChating={message.room === currentRoomID}
-              sendJsonMessage={sendJsonMessage}
-              setRoomID={setRoomID}
+          {filterCommunities.length ? (
+            filterCommunities.map((message) => (
+              <CommunityRoom
+                key={message.room}
+                roomID={message.room}
+                numberOfMembers={message.numberMember}
+                isRegistered={message.isRegistered}
+                isChating={message.room === currentRoomID}
+                sendJsonMessage={sendJsonMessage}
+                setRoomID={setRoomID}
+              />
+            ))
+          ) : (
+            <Image
+              src={Group}
+              width={80}
+              height={80}
+              className="m-auto h-full opacity-20"
+              alt="Group Icon"
             />
-          ))}
+          )}
         </div>
       </div>
       <Modal
