@@ -133,8 +133,8 @@ function AddReaction(props: AddReactionProps) {
         size="sm"
         className="w-full"
         onClick={() => {
-          close();
           setReply?.(message);
+          close();
         }}
       >
         Reply

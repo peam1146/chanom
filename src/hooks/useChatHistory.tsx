@@ -23,7 +23,9 @@ const useChatHistory = (
     setMessages(
       messageHistory.filter((message: Message) => {
         return (
-          message.room === roomID && message.event === MessageEvents.MESSAGE
+          message.room === roomID &&
+          (message.event === MessageEvents.MESSAGE ||
+            message.event === MessageEvents.REPLIES)
         );
       }),
     );

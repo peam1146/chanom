@@ -49,7 +49,7 @@ export default function ChatRoom(props: ChatRoomProps) {
     if (!text) return;
     const message = {
       event: reply ? MessageEvents.REPLIES : MessageEvents.MESSAGE,
-      data: myName + ":" + text,
+      data: reply ? myName + ":" + text + ":" + reply : myName + ":" + text,
       roomID: roomID,
     };
     sendJsonMessage(message);
@@ -82,6 +82,12 @@ export default function ChatRoom(props: ChatRoomProps) {
               key={index}
               message={message.data.split(":")[1]}
               sender={message.data.split(":")[0]}
+              replyMessage={
+                message.event === MessageEvents.REPLIES
+                  ? message.data.split(":")[2]
+                  : undefined
+              }
+              setReply={setReply}
             />
           );
         })}
