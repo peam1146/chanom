@@ -7,25 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/dialog";
 import { useState } from "react";
 import CreateCommuModal from "./CreateCommuModal";
-import { Message, MessageEvents } from "@/lib/socket/types";
+import { Message } from "@/lib/socket/types";
 
 type CommunityBoxProps = {
   sendJsonMessage: (message: Message) => void;
-  messageHistory: Message[];
+  community: Message[];
+  register: Message[];
+  currentRoomID: string;
   setRoomID: (roomID: string) => void;
 };
 export default function CommunityBox(prop: CommunityBoxProps) {
-  const { sendJsonMessage, messageHistory, setRoomID } = prop;
+  const { sendJsonMessage, community, register, currentRoomID, setRoomID } =
+    prop;
   const [isOpen, setIsOpen] = useState(false);
 
-  const communities = messageHistory.filter(
-    (message) => message.event === MessageEvents.CREATE_COMMUNITY,
-  );
-  const register = messageHistory.filter(
-    (message) => message.event === MessageEvents.REGISTER_COMMUNITY,
-  );
-
-  const filterCommunities = communities.map((community) => {
+  const filterCommunities = community.map((community) => {
     const memberCommunity = register.filter(
       (message) => message.room === community.room,
     );
@@ -58,17 +54,27 @@ export default function CommunityBox(prop: CommunityBoxProps) {
           </Button>
         </div>
         <div className="flex-1 overflow-scroll bg-cream scrollbar-hide">
-          {filterCommunities.map((msg) => (
-            <CommunityRoom
-              key={msg.room}
-              roomID={msg.room}
-              numberOfMembers={msg.numberMember}
-              isRegistered={msg.isRegistered}
-              isChating={false}
-              sendJsonMessage={sendJsonMessage}
-              setRoomID={setRoomID}
+          {filterCommunities.length ? (
+            filterCommunities.map((message) => (
+              <CommunityRoom
+                key={message.room}
+                roomID={message.room}
+                numberOfMembers={message.numberMember}
+                isRegistered={message.isRegistered}
+                isChating={message.room === currentRoomID}
+                sendJsonMessage={sendJsonMessage}
+                setRoomID={setRoomID}
+              />
+            ))
+          ) : (
+            <Image
+              src={Group}
+              width={80}
+              height={80}
+              className="m-auto h-full opacity-20"
+              alt="Group Icon"
             />
-          ))}
+          )}
         </div>
       </div>
       <Modal

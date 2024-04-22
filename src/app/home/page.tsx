@@ -6,7 +6,7 @@ import CommunityBox from "./_components/community/CommunityBox";
 import PeepBox from "./_components/peep/PeepBox";
 
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import { Message } from "@/lib/socket/types";
+import { Message, MessageEvents } from "@/lib/socket/types";
 import { redirect } from "next/navigation";
 
 export default function Page() {
@@ -20,6 +20,9 @@ export default function Page() {
   const [roomID, setRoomID] = useState<string>("Welcome to Chanom!");
 
   const [messageHistory, setMessageHistory] = useState<Message[]>([]);
+  const [community, setCommunity] = useState<Message[]>([]);
+  const [activeUser, setActiveUser] = useState<Message[]>([]);
+  const [register, setRegister] = useState<Message[]>([]);
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     WS_URL,
@@ -38,7 +41,13 @@ export default function Page() {
   useEffect(() => {
     if (lastJsonMessage !== null) {
       const message = lastJsonMessage as Message;
-      setMessageHistory((prev) => [...prev, message]);
+      if (message.event == MessageEvents.USER_ACTIVE)
+        setActiveUser((prev) => [...prev, message]);
+      else if (message.event == MessageEvents.REGISTER_COMMUNITY)
+        setRegister((prev) => [...prev, message]);
+      else if (message.event == MessageEvents.CREATE_COMMUNITY)
+        setCommunity((prev) => [...prev, message]);
+      else setMessageHistory((prev) => [...prev, message]);
     }
   }, [lastJsonMessage]);
 
@@ -51,12 +60,15 @@ export default function Page() {
       <div className="flex flex-col gap-5">
         <PeepBox
           sendJsonMessage={handleClickSendMessage}
-          messageHistory={messageHistory}
+          activeUser={activeUser}
+          currentRoomID={roomID}
           setRoomID={setRoomID}
         />
         <CommunityBox
           sendJsonMessage={handleClickSendMessage}
-          messageHistory={messageHistory}
+          community={community}
+          register={register}
+          currentRoomID={roomID}
           setRoomID={setRoomID}
         />
       </div>

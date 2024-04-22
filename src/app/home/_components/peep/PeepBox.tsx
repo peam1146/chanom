@@ -1,25 +1,24 @@
 import Image from "next/image";
 import User from "../../../../../public/icon-svg/user.svg";
 import PeepRoom from "./PeepRoom";
-import { useEffect } from "react";
-import { Message, MessageEvents } from "@/lib/socket/types";
+import { Message } from "@/lib/socket/types";
 
 type PeepBoxProps = {
   sendJsonMessage: (message: Message) => void;
-  messageHistory: Message[];
+  activeUser: Message[];
+  currentRoomID: string;
   setRoomID: (roomID: string) => void;
 };
 
 export default function PeepBox(prop: PeepBoxProps) {
-  const { messageHistory, setRoomID, sendJsonMessage } = prop;
+  const { sendJsonMessage, activeUser, currentRoomID, setRoomID } = prop;
   const SessionId = localStorage.getItem("SessionId");
-  const ActiveUser = messageHistory
+  const ActiveUser = activeUser
     .reduce((filteredMessages: Message[], message) => {
       const createdTime = new Date(message.createdAt || Date.now());
 
       // Check if the message is "Active" and if the user is not the current user
       if (
-        message.event === MessageEvents.USER_ACTIVE &&
         message.data !== localStorage.getItem("username") &&
         Date.now() - createdTime.getTime() < 1500
       ) {
@@ -56,19 +55,29 @@ export default function PeepBox(prop: PeepBoxProps) {
         </div>
       </div>
       <div className="flex-1 overflow-scroll  bg-cream scrollbar-hide">
-        {ActiveUser.sort().map((message) => {
-          const roomId = [message.room, SessionId].sort().join("_");
-          return (
-            <PeepRoom
-              key={roomId}
-              name={message.data}
-              roomID={roomId}
-              isChating={false}
-              setRoomID={setRoomID}
-              sendJsonMessage={sendJsonMessage}
-            />
-          );
-        })}
+        {ActiveUser.length ? (
+          ActiveUser.sort().map((message) => {
+            const roomId = [message.room, SessionId].sort().join("_");
+            return (
+              <PeepRoom
+                key={roomId}
+                name={message.data}
+                roomID={roomId}
+                isChating={roomId === currentRoomID}
+                setRoomID={setRoomID}
+                sendJsonMessage={sendJsonMessage}
+              />
+            );
+          })
+        ) : (
+          <Image
+            src={User}
+            width={80}
+            height={80}
+            className="m-auto h-full opacity-20"
+            alt="Group Icon"
+          />
+        )}
       </div>
     </div>
   );
