@@ -7,25 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/dialog";
 import { useState } from "react";
 import CreateCommuModal from "./CreateCommuModal";
-import { Message, MessageEvents } from "@/lib/socket/types";
+import { Message } from "@/lib/socket/types";
 
 type CommunityBoxProps = {
   sendJsonMessage: (message: Message) => void;
-  messageHistory: Message[];
+  community: Message[];
+  register: Message[];
   setRoomID: (roomID: string) => void;
 };
 export default function CommunityBox(prop: CommunityBoxProps) {
-  const { sendJsonMessage, messageHistory, setRoomID } = prop;
+  const { sendJsonMessage, community, register, setRoomID } = prop;
   const [isOpen, setIsOpen] = useState(false);
 
-  const communities = messageHistory.filter(
-    (message) => message.event === MessageEvents.CREATE_COMMUNITY,
-  );
-  const register = messageHistory.filter(
-    (message) => message.event === MessageEvents.REGISTER_COMMUNITY,
-  );
-
-  const filterCommunities = communities.map((community) => {
+  const filterCommunities = community.map((community) => {
     const memberCommunity = register.filter(
       (message) => message.room === community.room,
     );
@@ -58,12 +52,12 @@ export default function CommunityBox(prop: CommunityBoxProps) {
           </Button>
         </div>
         <div className="flex-1 overflow-scroll bg-cream scrollbar-hide">
-          {filterCommunities.map((msg) => (
+          {filterCommunities.map((message) => (
             <CommunityRoom
-              key={msg.room}
-              roomID={msg.room}
-              numberOfMembers={msg.numberMember}
-              isRegistered={msg.isRegistered}
+              key={message.room}
+              roomID={message.room}
+              numberOfMembers={message.numberMember}
+              isRegistered={message.isRegistered}
               isChating={false}
               sendJsonMessage={sendJsonMessage}
               setRoomID={setRoomID}

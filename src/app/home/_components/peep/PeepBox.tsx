@@ -1,25 +1,23 @@
 import Image from "next/image";
 import User from "../../../../../public/icon-svg/user.svg";
 import PeepRoom from "./PeepRoom";
-import { useEffect } from "react";
-import { Message, MessageEvents } from "@/lib/socket/types";
+import { Message } from "@/lib/socket/types";
 
 type PeepBoxProps = {
   sendJsonMessage: (message: Message) => void;
-  messageHistory: Message[];
+  activeUser: Message[];
   setRoomID: (roomID: string) => void;
 };
 
 export default function PeepBox(prop: PeepBoxProps) {
-  const { messageHistory, setRoomID, sendJsonMessage } = prop;
+  const { activeUser, setRoomID, sendJsonMessage } = prop;
   const SessionId = localStorage.getItem("SessionId");
-  const ActiveUser = messageHistory
+  const ActiveUser = activeUser
     .reduce((filteredMessages: Message[], message) => {
       const createdTime = new Date(message.createdAt || Date.now());
 
       // Check if the message is "Active" and if the user is not the current user
       if (
-        message.event === MessageEvents.USER_ACTIVE &&
         message.data !== localStorage.getItem("username") &&
         Date.now() - createdTime.getTime() < 1500
       ) {

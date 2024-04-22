@@ -36,7 +36,6 @@ export default function CommunityRoom(prop: CommunityRoomProps) {
         )}
         onClick={(e) => {
           if (!isRegistered) setIsOpen(true);
-          if (!isChating) console.log("goChat!!!");
           if (isRegistered) setRoomID(roomID);
         }}
       >
