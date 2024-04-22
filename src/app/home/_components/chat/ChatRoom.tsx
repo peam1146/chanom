@@ -48,8 +48,10 @@ export default function ChatRoom(props: ChatRoomProps) {
     const text = formData.get("message") as string;
     if (!text) return;
     const message = {
-      event: reply ? MessageEvents.REPLIES : MessageEvents.MESSAGE,
-      data: reply ? myName + ":" + text + ":" + reply : myName + ":" + text,
+      event: reply
+        ? MessageEvents.REPLIES + ":" + reply
+        : MessageEvents.MESSAGE,
+      data: myName + ":" + text,
       roomID: roomID,
     };
     sendJsonMessage(message);
@@ -80,11 +82,11 @@ export default function ChatRoom(props: ChatRoomProps) {
           return (
             <ChatBox
               key={index}
-              message={message.data.split(":")[1]}
+              message={message.data.split(":").slice(1).join(":")}
               sender={message.data.split(":")[0]}
               replyMessage={
-                message.event === MessageEvents.REPLIES
-                  ? message.data.split(":")[2]
+                message.event.split(":")[0] === MessageEvents.REPLIES
+                  ? message.event.split(":").slice(1).join(":")
                   : undefined
               }
               setReply={setReply}

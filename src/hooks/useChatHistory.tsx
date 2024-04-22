@@ -25,7 +25,7 @@ const useChatHistory = (
         return (
           message.room === roomID &&
           (message.event === MessageEvents.MESSAGE ||
-            message.event === MessageEvents.REPLIES)
+            message.event.split(":")[0] === MessageEvents.REPLIES)
         );
       }),
     );
