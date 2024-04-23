@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 export default function Reaction(props: ReactionProps) {
   const { type, className, onClick } = props;
-
+  //console.log(type);
   return (
     <Image
       src={`/icon-svg/${type}.svg`}

@@ -1,4 +1,10 @@
-import { Message, MessageEvents } from "@/lib/socket/types";
+import {
+  ChatEvents,
+  CommunityEvents,
+  Message,
+  MessageData,
+  UserEvents,
+} from "@/lib/socket/types";
 import { useState, useEffect } from "react";
 
 const useChatHistory = (
@@ -11,9 +17,8 @@ const useChatHistory = (
 
   useEffect(() => {
     const ping = messageHistory.filter((message) => {
-      return message.room === roomID && message.event === MessageEvents.PING;
+      return message.room === roomID && message.event === UserEvents.PING;
     });
-    console.log("Ping: ", ping); // "Ping:  [ { event: 'PING', data
     const otherUser = ping.filter((message) => {
       return message.data !== myName ? message.data : "";
     });
@@ -24,11 +29,13 @@ const useChatHistory = (
       messageHistory.filter((message: Message) => {
         return (
           message.room === roomID &&
-          (message.event === MessageEvents.MESSAGE ||
-            message.event.split(":")[0] === MessageEvents.REPLIES)
+          (message.event === ChatEvents.MESSAGE ||
+            message.event === ChatEvents.REPLY ||
+            message.event === CommunityEvents.REGISTER)
         );
       }),
     );
+    console.log(messageHistory);
   }, [messageHistory, myName, roomID]);
 
   return { user, messages };

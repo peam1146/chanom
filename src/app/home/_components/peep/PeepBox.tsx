@@ -8,10 +8,17 @@ type PeepBoxProps = {
   activeUser: Message[];
   currentRoomID: string;
   setRoomID: (roomID: string) => void;
+  setIsCommunity: (isCommunity: boolean) => void;
 };
 
 export default function PeepBox(prop: PeepBoxProps) {
-  const { sendJsonMessage, activeUser, currentRoomID, setRoomID } = prop;
+  const {
+    sendJsonMessage,
+    activeUser,
+    currentRoomID,
+    setRoomID,
+    setIsCommunity,
+  } = prop;
   const SessionId = localStorage.getItem("SessionId");
   const ActiveUser = activeUser
     .reduce((filteredMessages: Message[], message) => {
@@ -20,7 +27,7 @@ export default function PeepBox(prop: PeepBoxProps) {
       // Check if the message is "Active" and if the user is not the current user
       if (
         message.data !== localStorage.getItem("username") &&
-        Date.now() - createdTime.getTime() < 1500
+        Date.now() - createdTime.getTime() < 2000
       ) {
         // Check if the current room ID is already encountered
         const isRoomIdEncountered = filteredMessages.some(
@@ -65,6 +72,7 @@ export default function PeepBox(prop: PeepBoxProps) {
                 roomID={roomId}
                 isChating={roomId === currentRoomID}
                 setRoomID={setRoomID}
+                setIsCommunity={setIsCommunity}
                 sendJsonMessage={sendJsonMessage}
               />
             );

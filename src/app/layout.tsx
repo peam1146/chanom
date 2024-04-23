@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "@/styles/globals.css";
+import * as dotenv from "dotenv";
 
+dotenv.config();
 const visbyRound = localFont({
   src: [
     {

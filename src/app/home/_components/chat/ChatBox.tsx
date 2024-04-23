@@ -2,7 +2,7 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Reaction from "./Reaction";
-import { ReactionType, type ReactionProps } from "../../types";
+import { ReactionType } from "../../types";
 import {
   Popover,
   PopoverContent,
@@ -11,18 +11,22 @@ import {
 } from "@radix-ui/react-popover";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ChatEvents, Message } from "@/lib/socket/types";
+import * as Tooltip from "@radix-ui/react-tooltip";
 
 type ChatBoxProps = {
   message: string;
   sender: string;
   replyMessage?: string;
-  read?: number;
-  reactions?: ReactionProps[];
+  reactions?: ReactionType[];
   setReply?: (reply: string) => void;
+  sendJsonMessage: (message: Message) => void;
+  createdAt: string;
+  roomID: string;
 };
 
 export default function ChatBox(props: ChatBoxProps) {
-  const { sender, read, reactions } = props;
+  const { sender, createdAt, reactions } = props;
   const myName = localStorage.getItem("username") || "me";
   const isMe = sender === myName;
   const justify = isMe ? "items-end" : "items-start";
@@ -37,8 +41,10 @@ export default function ChatBox(props: ChatBoxProps) {
       {!isMe && <div className="h1 font-bold text-brown">{sender}</div>}
       <ReplyChatBox {...props} />
       <div className="flex flex-row gap-2">
-        {isMe && read && (
-          <div className="h2 self-end font-bold text-chanom">read ({read})</div>
+        {isMe && (
+          <div className="h3 self-end font-bold text-chanom">
+            {new Date(createdAt).toTimeString().split(" ")[0].slice(0, 5)}
+          </div>
         )}
         <Popover open={open}>
           <PopoverTrigger>
@@ -53,8 +59,10 @@ export default function ChatBox(props: ChatBoxProps) {
           </PopoverPortal>
         </Popover>
 
-        {!isMe && read && (
-          <div className="h2 self-end font-bold text-chanom">read ({read})</div>
+        {!isMe && (
+          <div className="h3 self-end font-bold text-chanom">
+            {new Date(createdAt).toTimeString().split(" ")[0].slice(0, 5)}
+          </div>
         )}
       </div>
       {reactions && <ReactionGroup {...props} />}
@@ -74,7 +82,7 @@ function ChatMessage(props: ChatBoxProps) {
         background,
       )}
     >
-      {message}
+      <div className="break-all">{message}</div>
     </span>
   );
 }
@@ -104,11 +112,39 @@ function ReactionGroup(props: ChatBoxProps) {
   const myName = localStorage.getItem("username") || "me";
   const isMe = sender === myName;
   return (
-    <div className="flex flex-row-reverse gap-1 pt-1">
-      {reactions
-        ?.slice(0, 6)
-        .map((reaction, index) => <Reaction key={index} {...reaction} />)}
+    // More than 6 wrapped in a div
+    <div className="mt-1 flex flex-row gap-1">
+      {reactions &&
+        reactions
+          .slice(0, 6)
+          .map((reaction, index) => <Reaction key={index} type={reaction} />)}
+      {reactions && reactions.length > 6 && (
+        <Tooltip.Provider>
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brown">
+                <div className="font-bold text-cream">
+                  +{reactions.length - 6}
+                </div>
+              </div>
+            </Tooltip.Trigger>
+            <ReactionTooltip reactions={reactions.slice(6)} />
+          </Tooltip.Root>
+        </Tooltip.Provider>
+      )}
     </div>
+  );
+}
+
+function ReactionTooltip({ reactions }: { reactions: ReactionType[] }) {
+  return (
+    <Tooltip.Content sideOffset={5} side="bottom">
+      <div className="flex flex-row gap-1 rounded-lg border-2 border-brown bg-cream p-1">
+        {reactions.map((reaction, index) => (
+          <Reaction key={index} type={reaction} />
+        ))}
+      </div>
+    </Tooltip.Content>
   );
 }
 
@@ -117,8 +153,8 @@ type AddReactionProps = ChatBoxProps & {
 };
 
 function AddReaction(props: AddReactionProps) {
-  const { close, message, setReply } = props;
-  const [selected, setSelected] = useState<ReactionType | null>(null);
+  const { close, message, setReply, sendJsonMessage, createdAt, roomID } =
+    props;
   const reactions: ReactionType[] = [
     "heart",
     "like",
@@ -145,8 +181,19 @@ function AddReaction(props: AddReactionProps) {
             key={index}
             className="h-7 w-7"
             onClick={() => {
-              setSelected(reaction);
               close();
+              const toSend: Message = {
+                event: ChatEvents.REACTION,
+                data: JSON.stringify({
+                  reaction: reaction,
+                  message: {
+                    message: message,
+                    createdAt: createdAt,
+                  },
+                }),
+                roomID: roomID,
+              };
+              sendJsonMessage(toSend);
             }}
           >
             <Reaction

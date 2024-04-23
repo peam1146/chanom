@@ -2,7 +2,7 @@ import Image from "next/image";
 import Chanom from "../../../../../public/icon-svg/chanom.svg";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Message, MessageEvents } from "@/lib/socket/types";
+import { CommunityEvents, Message, UserEvents } from "@/lib/socket/types";
 
 type CreateCommuModalProps = {
   setIsOpen: (value: boolean) => void;
@@ -20,13 +20,13 @@ export default function CreateCommuModal(prop: CreateCommuModalProps) {
     const name = formData.get("name");
     try {
       const createCommunityMessage: Message = {
-        event: MessageEvents.CREATE_COMMUNITY,
+        event: CommunityEvents.CREATE,
         data: "Create Success",
         roomID: name as string,
       };
       const registerCommunityMessage: Message = {
-        event: MessageEvents.REGISTER_COMMUNITY,
-        data: localStorage.getItem("SessionId") as string,
+        event: CommunityEvents.REGISTER,
+        data: localStorage.getItem("username") as string,
         roomID: name as string,
       };
 

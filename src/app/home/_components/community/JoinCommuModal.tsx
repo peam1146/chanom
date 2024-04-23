@@ -1,23 +1,25 @@
 import Image from "next/image";
 import Chanom from "../../../../../public/icon-svg/chanom.svg";
 import { Button } from "@/components/ui/button";
-import { Message, MessageEvents } from "@/lib/socket/types";
+import { Message, CommunityEvents } from "@/lib/socket/types";
 type JoinCommuModalProps = {
   roomID: string;
   setIsOpen: (value: boolean) => void;
   sendJsonMessage: (message: Message) => void;
+  setRoomID: (roomID: string) => void;
 };
 
 export default function JoinCommuModal(prop: JoinCommuModalProps) {
-  const { roomID, setIsOpen, sendJsonMessage } = prop;
+  const { roomID, setIsOpen, setRoomID, sendJsonMessage } = prop;
 
   const handleClick = () => {
     sendJsonMessage({
-      event: MessageEvents.REGISTER_COMMUNITY,
-      data: localStorage.getItem("SessionId") as string,
+      event: CommunityEvents.REGISTER,
+      data: localStorage.getItem("username") as string,
       roomID: roomID,
     });
     setIsOpen(false);
+    setRoomID(roomID);
   };
 
   return (

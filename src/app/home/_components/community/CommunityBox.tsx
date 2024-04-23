@@ -15,25 +15,42 @@ type CommunityBoxProps = {
   register: Message[];
   currentRoomID: string;
   setRoomID: (roomID: string) => void;
+  setIsCommunity: (isCommunity: boolean) => void;
 };
 export default function CommunityBox(prop: CommunityBoxProps) {
-  const { sendJsonMessage, community, register, currentRoomID, setRoomID } =
-    prop;
+  const {
+    sendJsonMessage,
+    community,
+    register,
+    currentRoomID,
+    setRoomID,
+    setIsCommunity,
+  } = prop;
   const [isOpen, setIsOpen] = useState(false);
 
-  const filterCommunities = community.map((community) => {
-    const memberCommunity = register.filter(
-      (message) => message.room === community.room,
-    );
-    return {
-      ...community,
-      numberMember: memberCommunity.length,
-      isRegistered: memberCommunity.some(
-        (message) => message.data === localStorage.getItem("SessionId"),
-      ),
-    };
-  });
+  const filterCommunities = community
+    .reduce((filteredMessages: Message[], message) => {
+      const isRoomIdEncountered = filteredMessages.some(
+        (filteredMessage: Message) => filteredMessage.room === message.room,
+      );
 
+      if (!isRoomIdEncountered) {
+        filteredMessages.push(message);
+      }
+
+      return filteredMessages;
+    }, [])
+    .map((community) => {
+      const memberCommunity = register.filter(
+        (message) => message.room === community.room,
+      );
+      return {
+        ...community,
+        isRegistered: memberCommunity.some(
+          (message) => message.data === localStorage.getItem("username"),
+        ),
+      };
+    });
   return (
     <>
       <div className="flex h-[308px] w-[380px] flex-col overflow-hidden rounded-lg border-2 border-brown shadow-window">
@@ -46,7 +63,7 @@ export default function CommunityBox(prop: CommunityBoxProps) {
           </div>
           <Button
             size="sm"
-            onClick={(e) => {
+            onClick={() => {
               setIsOpen(true);
             }}
           >
@@ -58,12 +75,12 @@ export default function CommunityBox(prop: CommunityBoxProps) {
             filterCommunities.map((message) => (
               <CommunityRoom
                 key={message.room}
-                roomID={message.room}
-                numberOfMembers={message.numberMember}
+                roomID={message.room as string}
                 isRegistered={message.isRegistered}
                 isChating={message.room === currentRoomID}
                 sendJsonMessage={sendJsonMessage}
                 setRoomID={setRoomID}
+                setIsCommunity={setIsCommunity}
               />
             ))
           ) : (

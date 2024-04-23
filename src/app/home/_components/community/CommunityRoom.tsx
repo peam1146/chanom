@@ -9,21 +9,21 @@ import JoinCommuModal from "./JoinCommuModal";
 import { Message as MESSAGE } from "@/lib/socket/types";
 type CommunityRoomProps = {
   roomID: string;
-  numberOfMembers: number;
   isChating: boolean;
   isRegistered: boolean;
   sendJsonMessage: (message: MESSAGE) => void;
   setRoomID: (roomID: string) => void;
+  setIsCommunity: (isCommunity: boolean) => void;
 };
 
 export default function CommunityRoom(prop: CommunityRoomProps) {
   const {
     roomID,
-    numberOfMembers,
     isChating,
     isRegistered,
     sendJsonMessage,
     setRoomID,
+    setIsCommunity,
   } = prop;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -35,7 +35,12 @@ export default function CommunityRoom(prop: CommunityRoomProps) {
           isChating ? "bg-mayonnaise" : "cursor-pointer bg-white",
         )}
         onClick={(e) => {
-          isRegistered ? setRoomID(roomID) : setIsOpen(true);
+          if (isRegistered) {
+            setRoomID(roomID);
+            setIsCommunity(true);
+          } else {
+            setIsOpen(true);
+          }
         }}
       >
         <div className="rounded-full border-2 border-brown bg-mustard p-1">
@@ -43,11 +48,6 @@ export default function CommunityRoom(prop: CommunityRoomProps) {
         </div>
         <div className="h1 my-auto flex max-w-[256px] flex-1 gap-1 font-bold text-brown">
           <p className="truncate">{roomID}</p>{" "}
-          {numberOfMembers && numberOfMembers > 999 ? (
-            <span>(999+)</span>
-          ) : (
-            <span>({numberOfMembers})</span>
-          )}
         </div>
 
         <Image
@@ -67,6 +67,7 @@ export default function CommunityRoom(prop: CommunityRoomProps) {
           roomID={roomID}
           setIsOpen={setIsOpen}
           sendJsonMessage={sendJsonMessage}
+          setRoomID={setRoomID}
         />
       </Modal>
     </>

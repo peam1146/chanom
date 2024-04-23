@@ -3,18 +3,26 @@ import Image from "next/image";
 import User from "../../../../../public/icon-svg/user.svg";
 import Message from "../../../../../public/icon-svg/message.svg";
 import { cn } from "@/lib/utils";
-import { Message as MESSAGE, MessageEvents } from "@/lib/socket/types";
+import { Message as MESSAGE, UserEvents } from "@/lib/socket/types";
 
 type PeepRoomProps = {
   name: string;
   roomID: string;
   isChating: boolean;
   setRoomID: (roomID: string) => void;
+  setIsCommunity: (isCommunity: boolean) => void;
   sendJsonMessage: (message: MESSAGE) => void;
 };
 
 export default function PeepRoom(prop: PeepRoomProps) {
-  const { name, setRoomID, isChating, roomID, sendJsonMessage } = prop;
+  const {
+    name,
+    setRoomID,
+    isChating,
+    roomID,
+    setIsCommunity,
+    sendJsonMessage,
+  } = prop;
 
   return (
     <div
@@ -23,9 +31,10 @@ export default function PeepRoom(prop: PeepRoomProps) {
         isChating ? "bg-mayonnaise" : "cursor-pointer bg-white",
       )}
       onClick={() => {
+        setIsCommunity(false);
         setRoomID(roomID);
         sendJsonMessage({
-          event: MessageEvents.PING,
+          event: UserEvents.PING,
           data: name,
           roomID: roomID,
         });
