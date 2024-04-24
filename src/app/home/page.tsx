@@ -39,7 +39,8 @@ export default function Page() {
   });
 
   const handleLogout = () => {
-    localStorage.setItem("sessionID", "");
+    localStorage.removeItem("SessionId");
+    localStorage.removeItem("username");
     router.push("/signin");
   };
 

@@ -27,7 +27,7 @@ export default function PeepBox(prop: PeepBoxProps) {
       // Check if the message is "Active" and if the user is not the current user
       if (
         message.data !== localStorage.getItem("username") &&
-        Date.now() - createdTime.getTime() < 2000
+        Date.now() - createdTime.getTime() < 5000
       ) {
         // Check if the current room ID is already encountered
         const isRoomIdEncountered = filteredMessages.some(
